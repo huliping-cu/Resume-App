@@ -3,12 +3,20 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import OpenAI from 'openai';
 import Experience from './models/experience.js';
+import path from 'path';
+import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
 const port = 8000;
 const expEmbeddings = [];
+
+// Middleware to parse JSON requests
+app.use(express.json());
+
+// Allow cross-origin requests
+app.use(cors());
 
 // Serve static files (like index.html, CSS, JS, etc.) from the 'public' folder
 app.use(express.static('public'));
@@ -144,6 +152,26 @@ const getEmbeddings = async (experiences) => {
 // Define the `/` route to serve the index.html
 app.get('/', (req, res) => {
   res.sendFile('index.html', { root: 'public' }); // Send the index.html file from the 'public' folder
+});
+
+// Job description endpoint
+app.post('/submit-job-description', (req, res) => {
+  const { jobDescription } = req.body;
+  console.log('Received Job Description:', jobDescription);
+
+  // Simulate processing the job description to generate 5 points
+  const points = [
+    'Strong communication skills are required.',
+    'Experience with JavaScript frameworks is a plus.',
+    'Knowledge of cloud computing is essential.',
+    'Proficiency in Node.js and React is expected.',
+    'Ability to manage and debug backend services is important.',
+  ];
+
+  res.json({
+    message: 'Job description processed successfully!',
+    points,
+  });
 });
 
 app.get('/resume', async (req, res) => {
